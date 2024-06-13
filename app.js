@@ -28,8 +28,62 @@ app.use(express.json());
  ]
 
  app.get('/produtos', (req,res) => {
-    res.json(produtos);
+    try{
+        res.json(produtos).status(200);
+    } catch{
+        res.json({message:"Internal Server Error"}).status(500)
+    }
+
  })
+
+ app.get('/produtos/:id', (req,res) => {
+    const id = parseInt(req.params.id);
+    const produto = produtos.find(produto=>produto.id===id);
+    if(!produto){
+        res.json({message:"Error ao encontrar produto"}).status(404)
+    }
+    try{
+        res.json(produto).status(200);
+    } catch {
+        res.json({message:"Internal Server Error"}).status(500)
+    }
+    
+ })
+
+ app.post('/produtos', (req,res) => {
+    const produto = req.body
+    produtos.push(produto)
+    try{
+        res.json(produtos).status(200);
+    } catch {
+        res.json({message:"Internal Server Error"}).status(500)
+    }
+    
+ })
+
+ app.delete('/produtos/:id', (req,res) => {
+    const id = parseInt(req.params.id)
+    produtos = produtos.filter(produto => produto.id !==id)
+    res.json(produtos).status(200)
+    
+ })
+ app.put('/produtos/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const updatedProduct = req.body;
+    try{
+        produtos = produtos.map(produto => {
+            if (produto.id === id) {
+              return { ...produto, ...updatedProduct };
+            }
+            return produto;
+          });
+          res.send(produtos).status(200);
+    } catch{
+        res.json({message:"Internal server error"}).status(500)
+    }
+
+  });
+
 
  app.listen(PORT,() => {
     console.log(`Aplicação rodando na porta ${PORT}`)
