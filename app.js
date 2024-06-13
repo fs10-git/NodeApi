@@ -28,8 +28,37 @@ app.use(express.json());
  ]
 
  app.get('/produtos', (req,res) => {
-    res.json(produtos);
+    try {
+        res.json(produtos).status(200);
+    } catch {
+        res.json({message:"Internal Server Error"}).status(500)
+    }
  })
+
+ app.get('/produtos/:id', (req,res) => {
+    const id = parseInt(req.params.id);
+    const produto = produtos.find(produto=>produto.id===id); //ArrayMethod, acha o primeiro id igual o Find
+
+    if(!produto){
+        res.json({message:"Erro ao encontrar produto"}).status(404)
+    }
+    try {
+        res.json(produto).status(500)
+    } catch {
+        res.json({message:"Internal Server Error."}).status(500)
+    }
+})
+
+app.post('/produtos', (req,res) => {
+    const produto = req.body;
+    produtos.push(produto)
+
+    try {
+        res.json(produtos).status(500)
+    } catch {
+        res.json({message:"Internal Server Error."}).status(500)
+    }
+})
 
  app.listen(PORT,() => {
     console.log(`Aplicação rodando na porta ${PORT}`)
