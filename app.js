@@ -1,6 +1,16 @@
 import express from "express";
+import mysql from "mysql2/promise"
+
+
 const app = express();
 const PORT = 666;
+
+const connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password:'1234',
+    database: 'dripstore'
+  });
 
 app.use(express.json());
 
