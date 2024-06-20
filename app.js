@@ -84,10 +84,3 @@ connection.connect((error) => {
         res.status(500).send('Erro ao atualizar produto');
     }
   });
-
-
-
-
- app.listen(PORT,() => {
-    console.log(`Aplicação rodando na porta ${PORT}`)
- })
