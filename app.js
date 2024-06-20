@@ -1,98 +1,91 @@
 import express from "express";
-import mysql from "mysql2/promise"
-
-
+import mysql from "mysql2"
 const app = express();
 const PORT = 666;
 
-const connection = await mysql.createConnection({
+app.use(express.json());
+
+const connection =  mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password:'1234',
-    database: 'dripstore'
+    database: 'dripstore',
   });
 
-app.use(express.json());
-
- let produtos = [
-    {
-        id:1,
-        nome:"tenis",
-        valor:20.00
-    },
-    {
-        id:2,
-        nome:"raquete",
-        valor:30.00
-    },
-    {
-        id:3,
-        nome:"short",
-        valor:30.00
-    },
-    {
-        id:4,
-        nome:"camisa",
-        valor:30.00
+connection.connect((error) => {
+    if(error){
+        console.log("Conexão com o banco de dados não foi feita")
+    } else {
+        console.log("Conexão com o banco de dados efetuada com sucesso")
     }
- ]
-
+})
  app.get('/produtos', (req,res) => {
-    try{
-        res.json(produtos).status(200);
-    } catch{
-        res.json({message:"Internal Server Error"}).status(500)
-    }
-
+    connection.query("SELECT * FROM tb_produtos", (error,results) => {
+        try{
+            res.send(results).status(200)
+        }catch{
+            res.send("Error ao buscar produtos").status(500)
+        }
+    })
  })
 
  app.get('/produtos/:id', (req,res) => {
-    const id = parseInt(req.params.id);
-    const produto = produtos.find(produto=>produto.id===id);
-    if(!produto){
-        res.json({message:"Error ao encontrar produto"}).status(404)
-    }
-    try{
-        res.json(produto).status(200);
-    } catch {
-        res.json({message:"Internal Server Error"}).status(500)
-    }
-    
- })
-
- app.post('/produtos', (req,res) => {
-    const produto = req.body
-    produtos.push(produto)
-    try{
-        res.json(produtos).status(200);
-    } catch {
-        res.json({message:"Internal Server Error"}).status(500)
-    }
+    const id = req.params.id;
+    connection.query( `SELECT * FROM tb_produtos WHERE id = ${id}`,(error,results) => {
+        try{
+            res.send(results).status(200)
+        }catch{
+            res.send("Error ao buscar produtos").status(500)
+        }
+    })
     
  })
 
  app.delete('/produtos/:id', (req,res) => {
-    const id = parseInt(req.params.id)
-    produtos = produtos.filter(produto => produto.id !==id)
-    res.json(produtos).status(200)
+    const id = req.params.id
+    connection.query( `DELETE FROM tb_produtos WHERE id = ${id}`,(error,results) => {
+        try{
+            res.send("Produto deletado com sucesso").status(204)
+        }catch{
+            res.send("Error ao deletar produtos").status(500)
+        }
+    })
     
  })
- app.put('/produtos/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const updatedProduct = req.body;
-    try{
-        produtos = produtos.map(produto => {
-            if (produto.id === id) {
-              return { ...produto, ...updatedProduct };
-            }
-            return produto;
-          });
-          res.send(produtos).status(200);
-    } catch{
-        res.json({message:"Internal server error"}).status(500)
-    }
 
+ app.post('/produtos', (req, res) => {
+    const { cor, tamanho, categorias_id,preco,estoque,num_serial,promocao_id } = req.body.produtos; 
+    const query = "INSERT INTO tb_produtos (cor,tamanho,categorias_id,preco,estoque,num_serial,promocao_id) VALUES (?, ? , ? , ? , ? , ? , ?)";
+    const values = [cor,tamanho,categorias_id,preco,estoque,num_serial,promocao_id];
+    
+    try{
+        connection.query(query, values, (err, results) => {
+            res.status(201).send('Produto adicionado com sucesso');
+          });
+
+    } catch{
+        console.error('Erro ao adicionar produto:', err);
+        res.status(500).send('Erro ao adicionar produto');
+    }
   });
+  
+  app.put('/produtos/:id', (req, res) => {
+    const id = req.params.id;
+    const { cor, tamanho, categorias_id,preco,estoque,num_serial,promocao_id } = req.body.produtos; 
+    const query = "UPDATE tb_produtos SET cor = ?, tamanho = ?, categorias_id = ?, preco = ?, estoque = ?, num_serial = ?, promocao_id = ? WHERE id = ?";
+    const values = [cor,tamanho,categorias_id,preco,estoque,num_serial,promocao_id,id];
+    
+    try{
+        connection.query(query, values, (err, results) => {
+            res.status(201).send('Produto atualizado com sucesso');
+          });
+
+    } catch{
+        res.status(500).send('Erro ao atualizar produto');
+    }
+  });
+
+
 
 
  app.listen(PORT,() => {
