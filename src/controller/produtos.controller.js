@@ -20,3 +20,13 @@ export const getOne = async (req, res) => {
     res.status(500).json({ message: error});
   }
 };
+
+export const create = async (req, res) => {
+  try {
+    const data = req.body;
+    const produtos = await produtoRepository.create(data);
+    res.status(200).json(produtos);
+  } catch (error) {
+    res.status(500).json({ message: error});
+  }
+};

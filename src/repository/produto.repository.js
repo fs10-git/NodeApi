@@ -14,3 +14,8 @@ export const getOne = async (id) => {
             }
         });
    }
+
+
+   export const create = async (produto) => {
+    return await prisma.produtos.create({data:produto});
+   }
