@@ -1,7 +1,11 @@
-import * from produtoRepository  from "../repository/produto.repository"
 
+import * as produtoRepository from '../repository/produto.repository.js';
 
-export const getProducts = async (req,res) => {
-
-}
-
+export const getAll = async (req, res) => {
+  try {
+    const produtos = await produtoRepository.getAllProdutos();
+    res.status(200).json(produtos);
+  } catch (error) {
+    res.status(500).json({ message: 'Error ao buscar produtos' });
+  }
+};
