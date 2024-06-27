@@ -12,10 +12,10 @@ model produtos {
     cor String
     tamanho String
     categorias_id Int
-    preco Decimal
+    preco Float
     estoque Int
     num_serial Int
     promocao_id Int
 
-  @@map("tb_produtos")
+  @@map("produtos")
 }
