@@ -9,3 +9,14 @@ export const getAll = async (req, res) => {
     res.status(500).json({ message: error});
   }
 };
+
+export const getOne = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(id)
+    const produtos = await produtoRepository.getOne(id);
+    res.status(200).json(produtos);
+  } catch (error) {
+    res.status(500).json({ message: error});
+  }
+};
