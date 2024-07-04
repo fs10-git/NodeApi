@@ -18,4 +18,20 @@ export const getOne = async (id) => {
 
    export const create = async (produto) => {
     return await prisma.produtos.create({data:produto});
+
    }
+
+export const update = async (id, produto) => {
+    return await prisma.produtos.update(
+{
+    where:   { id : Number(id)  },
+    data: produto,
+});
+}
+
+export const deletar = async (id) => {
+    return await prisma.produtos.delete(
+{
+    where:   { id : Number(id)  },
+});
+}

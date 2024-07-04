@@ -17,5 +17,17 @@ model produtos {
     num_serial Int
     promocao_id Int
 
-  @@map("produtos")
+  @@map("tb_produtos")
+}
+
+model usuarios{
+    id Int @unique 
+	nome String
+	cpf String
+	email String
+	senha String
+  endereco String
+	
+  @@map("tb_usuarios")
+
 }
