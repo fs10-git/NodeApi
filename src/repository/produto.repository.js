@@ -35,4 +35,6 @@ export const update = async (id, produto) => {
                 id : Number(id)
             }
         });
+
+        
 }
