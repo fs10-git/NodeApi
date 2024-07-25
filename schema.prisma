@@ -19,3 +19,13 @@ model produtos {
 
   @@map("produtos")
 }
+
+model produtos_alta {
+  id Int @unique @default(autoincrement())
+  categoria String 
+  modelo    String
+  desconto  Decimal
+  valor_total Decimal
+
+  @@map("produtos_alta")
+}
